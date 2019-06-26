@@ -1,0 +1,133 @@
+---
+# Source: mattermost-team-edition/templates/pvc.yaml
+
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: mattermost-mattermost-team-edition
+  labels:
+    app.kubernetes.io/name: mattermost-team-edition
+    app.kubernetes.io/instance: mattermost
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: mattermost-team-edition-2.3.0
+  annotations:
+  
+spec:
+  accessModes:
+  - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "10Gi"
+
+
+
+---
+# Source: mattermost-team-edition/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mattermost-team-edition
+  labels:
+    app.kubernetes.io/name: mattermost-team-edition
+    app.kubernetes.io/instance: mattermost
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: mattermost-team-edition-2.3.0
+spec:
+  selector:
+    app.kubernetes.io/name: mattermost-team-edition
+    app.kubernetes.io/instance: mattermost
+    app.kubernetes.io/managed-by: Tiller
+  type: LoadBalancer
+  ports:
+  - port: 8065
+    targetPort: 8065
+    protocol: TCP
+    name: mattermost-team-edition
+
+---
+# Source: mattermost-team-edition/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mattermost-mattermost-team-edition
+  labels:
+    app.kubernetes.io/name: mattermost-team-edition
+    app.kubernetes.io/instance: mattermost
+    app.kubernetes.io/managed-by: Tiller
+    helm.sh/chart: mattermost-team-edition-2.3.0
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mattermost-team-edition
+      app.kubernetes.io/instance: mattermost
+      app.kubernetes.io/managed-by: Tiller
+  template:
+    metadata:
+      annotations:
+        checksum/config: 0921ad562880a31e3efea2f20b18a60e02cb6455ee16fb59def311681bc1b6b4
+      labels:
+        app.kubernetes.io/name: mattermost-team-edition
+        app.kubernetes.io/instance: mattermost
+        app.kubernetes.io/managed-by: Tiller
+        helm.sh/chart: mattermost-team-edition-2.3.0
+    spec:
+      initContainers:
+      containers:
+      - name: mattermost-team-edition
+        image: "mattermost/mattermost-team-edition:5.8.0"
+        imagePullPolicy: IfNotPresent
+        env:
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        livenessProbe:
+          initialDelaySeconds: 90
+          timeoutSeconds: 5
+          periodSeconds: 15
+          httpGet:
+            path: /api/v4/system/ping
+            port: 8065
+        readinessProbe:
+          initialDelaySeconds: 15
+          timeoutSeconds: 5
+          periodSeconds: 15
+          httpGet:
+            path: /api/v4/system/ping
+            port: 8065
+        volumeMounts:
+        - mountPath: /mattermost/config/config.json
+          name: config-json
+          subPath: config.json
+        - mountPath: /mattermost/data
+          name: mattermost-data
+        resources:
+            null
+            
+      volumes:
+      - name: config-json
+        configMap:
+          name: mattermost-mattermost-team-edition-config-json
+          items:
+          - key: config.json
+            path: config.json
+      - name: mattermost-data
+      
+        persistentVolumeClaim:
+          claimName: mattermost-mattermost-team-edition
+      
+
+---
+# Source: mattermost-team-edition/templates/config.tpl
+
+
+---
+# Source: mattermost-team-edition/templates/ingress.yaml
+
+
+

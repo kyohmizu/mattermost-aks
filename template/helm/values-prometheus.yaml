@@ -1,0 +1,11 @@
+serviceAccounts:
+  alertmanager:
+    create: false
+  pushgateway:
+    create: false
+
+alertmanager:
+  enabled: false
+
+pushgateway:
+  enabled: false

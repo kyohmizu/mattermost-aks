@@ -1,0 +1,10 @@
+externalDB:
+  enabled: true
+  externalDriverType: "postgres"
+  externalConnectionString: "$DATASOURCE_POSTGRES"
+
+mysql:
+  enabled: false
+
+service:
+  type: LoadBalancer

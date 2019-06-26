@@ -1,0 +1,7 @@
+plan
+*.terraform
+*.tfstate.*
+*.tfstate
+terraform.key.json
+setvars.sh
+manifests/mattermost-config.yaml
