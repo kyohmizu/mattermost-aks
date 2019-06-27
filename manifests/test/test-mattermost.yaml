@@ -1,15 +1,14 @@
-
 ---
 # Source: mattermost-team-edition/templates/tests/mattermost-config-test.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: release-name-mattermost-team-edition-tests
+  name: mattermost-mattermost-team-edition-tests
   labels:
     app.kubernetes.io/name: mattermost-team-edition
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: mattermost
     app.kubernetes.io/managed-by: Tiller
-    helm.sh/chart: mattermost-team-edition-2.3.0
+    helm.sh/chart: mattermost-team-edition-3.1.2
 data:
   run.sh: |-
     @test "Testing Mattermost is accessible" {
@@ -21,12 +20,12 @@ data:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "release-name-mattermost-team-edition-test-nja87"
+  name: "mattermost-mattermost-team-edition-test-o8pvx"
   labels:
     app.kubernetes.io/name: mattermost-team-edition
-    app.kubernetes.io/instance: release-name
+    app.kubernetes.io/instance: mattermost
     app.kubernetes.io/managed-by: Tiller
-    helm.sh/chart: mattermost-team-edition-2.3.0
+    helm.sh/chart: mattermost-team-edition-3.1.2
   annotations:
     "helm.sh/hook": test-success
 spec:
@@ -44,8 +43,8 @@ spec:
     - mountPath: /tools
       name: tools
   containers:
-  - name: release-name-test
-    image: "mattermost/mattermost-team-edition:5.8.0"
+  - name: mattermost-test
+    image: "mattermost/mattermost-team-edition:5.9.0"
     command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
     volumeMounts:
     - mountPath: /tests
@@ -56,7 +55,7 @@ spec:
   volumes:
   - name: tests
     configMap:
-      name: release-name-mattermost-team-edition-tests
+      name: mattermost-mattermost-team-edition-tests
   - name: tools
     emptyDir: {}
   restartPolicy: Never

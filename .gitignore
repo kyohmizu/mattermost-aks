@@ -4,4 +4,4 @@ plan
 *.tfstate
 terraform.key.json
 setvars.sh
-manifests/mattermost-config.yaml
+template/helm/values-mattermost.yaml

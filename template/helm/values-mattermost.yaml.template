@@ -8,3 +8,7 @@ mysql:
 
 service:
   type: LoadBalancer
+
+configJSON:
+  ServiceSettings:
+    EnableCustomEmoji: true
