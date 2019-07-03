@@ -10,7 +10,8 @@ ifeq ($(ARM_CLIENT_ID), )
 else ifeq ($(ARM_CLIENT_SECRET), )
 	$(error ARM_CLIENT_SECRET is not set)
 endif
+	mkdir aks-engine
 	envsubst < template/aks-engine/kubernetes.json > aks-engine/kubernetes.json
 
 create-cluster: aks-engine/kubernetes.json
-	aks-engine deploy --subscription-id $ARM_SUBSCRIPTION_ID \ --location japaneast \ --api-model aks-engine/kubernetes.json
+	aks-engine deploy --subscription-id $(ARM_SUBSCRIPTION_ID) --client-id $(ARM_CLIENT_ID) --client-secret $(ARM_CLIENT_SECRET) --location japaneast --api-model aks-engine/kubernetes.json

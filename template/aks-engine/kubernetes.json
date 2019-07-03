@@ -14,7 +14,7 @@
     },
     "masterProfile": {
       "count": 1,
-      "dnsPrefix": "mattermost",
+      "dnsPrefix": "mattermost-aks",
       "vmSize": "Standard_DS2_v2"
     },
     "agentPoolProfiles": [
