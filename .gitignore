@@ -4,4 +4,5 @@ plan
 *.tfstate
 terraform.key.json
 setvars.sh
-template/helm/values-mattermost.yaml
+helm/values-mattermost.yaml
+aks-engine/kubernetes.json

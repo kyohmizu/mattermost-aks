@@ -2,7 +2,7 @@ helm-values:
 ifeq ($(DATASOURCE_POSTGRES), )
 	$(error DATASOURCE_POSTGRES is not set)
 endif
-	envsubst < template/helm/values-mattermost.yaml.template > template/helm/values-mattermost.yaml
+	envsubst < template/helm/values-mattermost.yaml > helm/values-mattermost.yaml
 
-test: 
-	echo $(DATASOURCE_POSTGRES)
+aks.json:
+	envsubst < template/aks-engine/kubernetes.json > aks-engine/kubernetes.json
