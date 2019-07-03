@@ -4,5 +4,13 @@ ifeq ($(DATASOURCE_POSTGRES), )
 endif
 	envsubst < template/helm/values-mattermost.yaml > helm/values-mattermost.yaml
 
-aks.json:
+kubernetes.json:
+ifeq ($(ARM_CLIENT_ID), )
+	$(error ARM_CLIENT_ID is not set)
+else ifeq ($(ARM_CLIENT_SECRET), )
+	$(error ARM_CLIENT_SECRET is not set)
+endif
 	envsubst < template/aks-engine/kubernetes.json > aks-engine/kubernetes.json
+
+create-cluster: aks-engine/kubernetes.json
+	aks-engine deploy --subscription-id $ARM_SUBSCRIPTION_ID \ --location japaneast \ --api-model aks-engine/kubernetes.json
