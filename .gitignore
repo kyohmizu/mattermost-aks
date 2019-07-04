@@ -6,3 +6,5 @@ terraform.key.json
 setvars.sh
 helm/values-mattermost.yaml
 aks-engine/kubernetes.json
+_output/
+transactions/

@@ -108,18 +108,18 @@ spec:
       volumes:
       - name: config-json
         flexVolume:
-        driver: "azure/kv"
-        secretRef:
-          name: kvcreds
-        options:
-          usepodidentity: "false"
-          keyvaultname: "mattermost-aks"
-          keyvaultobjectnames: "config"
-          keyvaultobjectaliases: "config.json"
-          keyvaultobjecttypes: secret
-          resourcegroup: "mattermost"
-          subscriptionid: "$ARM_SUBSCRIPTION_ID"
-          tenantid: "$ARM_TENANT_ID"
+          driver: "azure/kv"
+          secretRef:
+            name: kvcreds
+          options:
+            usepodidentity: "false"
+            keyvaultname: "mattermost-aks"
+            keyvaultobjectnames: "config"
+            keyvaultobjectaliases: "config.json"
+            keyvaultobjecttypes: secret
+            resourcegroup: "mattermost"
+            subscriptionid: "$ARM_SUBSCRIPTION_ID"
+            tenantid: "$ARM_TENANT_ID"
       - name: mattermost-data
       
         persistentVolumeClaim:
