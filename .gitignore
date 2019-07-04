@@ -4,7 +4,8 @@ plan
 *.tfstate
 terraform.key.json
 setvars.sh
-helm/values-mattermost.yaml
-aks-engine/kubernetes.json
 _output/
 transactions/
+helm/values-mattermost.yaml
+manifests/mattermost.yaml
+aks-engine/kubernetes.json

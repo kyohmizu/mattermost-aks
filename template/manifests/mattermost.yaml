@@ -99,7 +99,7 @@ spec:
         volumeMounts:
         - mountPath: /mattermost/config/
           name: config-json
-          readonly: true
+          readOnly: true
         - mountPath: /mattermost/data
           name: mattermost-data
         resources:
