@@ -8,4 +8,6 @@ _output/
 transactions/
 helm/values-mattermost.yaml
 manifests/mattermost.yaml
+manifests/cluster-issuer.yaml
+manifests/mattermost-ingress.yaml
 aks-engine/kubernetes.json
