@@ -6,8 +6,13 @@ terraform.key.json
 setvars.sh
 _output/
 transactions/
-helm/values-mattermost.yaml
-manifests/mattermost.yaml
-manifests/cluster-issuer.yaml
-manifests/mattermost-ingress.yaml
+
+mattermost/helm/values-mattermost.yaml
+mattermost/mattermost.yaml
+mattermost/mattermost-ingress.yaml
+
+cert/cluster-issuer.yaml
+
+logging/fluent-bit-cm.yaml
+
 aks-engine/kubernetes.json
