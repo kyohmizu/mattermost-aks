@@ -42,8 +42,8 @@ data:
     [OUTPUT]
         Name        azure
         Match       *
-        Customer_ID $FLUENT_AZURE_WORKSPACE_ID
-        Shared_Key  $FLUENT_AZURE_WORKSPACE_KEY
+        Customer_ID ${FLUENT_AZURE_WORKSPACE_ID}
+        Shared_Key  ${FLUENT_AZURE_WORKSPACE_KEY}
   parsers.conf: |
     [PARSER]
         Name   apache
