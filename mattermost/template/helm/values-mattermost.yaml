@@ -1,7 +1,7 @@
 externalDB:
   enabled: true
   externalDriverType: "postgres"
-  externalConnectionString: "$DATASOURCE_POSTGRES"
+  externalConnectionString: "$DATASOURCE_DB"
 
 mysql:
   enabled: false

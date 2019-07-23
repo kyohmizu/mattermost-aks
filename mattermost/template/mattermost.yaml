@@ -33,7 +33,7 @@ spec:
     app.kubernetes.io/name: mattermost-team-edition
     app.kubernetes.io/instance: mattermost
     app.kubernetes.io/managed-by: Tiller
-  type: LoadBalancer
+  type: ClusterIP
   ports:
   - port: 8065
     targetPort: http
@@ -113,11 +113,11 @@ spec:
             name: kvcreds
           options:
             usepodidentity: "false"
-            keyvaultname: "mattermost-aks"
+            keyvaultname: "$KV_NAME"
             keyvaultobjectnames: "config"
             keyvaultobjectaliases: "config.json"
             keyvaultobjecttypes: secret
-            resourcegroup: "mattermost"
+            resourcegroup: "$RSGROUP"
             subscriptionid: "$ARM_SUBSCRIPTION_ID"
             tenantid: "$ARM_TENANT_ID"
       - name: mattermost-data

@@ -11,6 +11,8 @@ mattermost/helm/values-mattermost.yaml
 mattermost/mattermost.yaml
 mattermost/mattermost-ingress.yaml
 
+terraform/secret
+
 cert/cluster-issuer.yaml
 
 logging/fluent-bit-cm.yaml
