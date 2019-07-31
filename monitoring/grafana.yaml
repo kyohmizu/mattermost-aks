@@ -5,9 +5,10 @@ apiVersion: extensions/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     heritage: Tiller
     release: grafana
   annotations:
@@ -53,21 +54,55 @@ spec:
   readOnlyRootFilesystem: false
 
 ---
+# Source: grafana/templates/tests/test-podsecuritypolicy.yaml
+
+apiVersion: extensions/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: grafana-test
+  labels:
+    app: grafana
+    chart: grafana-3.7.1
+    heritage: Tiller
+    release: grafana
+spec:
+  allowPrivilegeEscalation: true
+  privileged: false
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  fsGroup:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  runAsUser:
+    rule: RunAsAny
+  volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - projected
+  - secret
+
+---
 # Source: grafana/templates/secret.yaml
 
 apiVersion: v1
 kind: Secret
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "NTV5cVVBeEFlYnpEV3JHZEdSTWloUVdqTExWVkRuZUJlTExGVDA3Rw=="
+  admin-password: "Um04TXp5cHgwdVlCNVNjOXVpVEdTTGtRbk9vc2NTc0NuN290dXVSRw=="
   ldap-toml: ""
 
 ---
@@ -76,9 +111,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
 data:
@@ -106,6 +142,26 @@ data:
     
 
 ---
+# Source: grafana/templates/tests/test-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-test
+  labels:
+    app: grafana
+    chart: "grafana-3.7.1"
+    heritage: "Tiller"
+    release: "grafana"
+data:
+  run.sh: |-
+    @test "Test Health" {
+      url="http://grafana/api/health"
+
+      code=$(curl -s -o /dev/null -I -w "%{http_code}" $url)
+      [ "$code" == "200" ]
+    }
+
+---
 # Source: grafana/templates/serviceaccount.yaml
 
 apiVersion: v1
@@ -113,10 +169,24 @@ kind: ServiceAccount
 metadata:
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     heritage: Tiller
     release: grafana
   name: grafana
+  namespace: default
+
+---
+# Source: grafana/templates/tests/test-serviceaccount.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app: grafana
+    chart: grafana-3.7.1
+    heritage: Tiller
+    release: grafana
+  name: grafana-test
 
 ---
 # Source: grafana/templates/clusterrole.yaml
@@ -126,7 +196,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
   name: grafana-clusterrole
@@ -141,7 +211,7 @@ metadata:
   name: grafana-clusterrolebinding
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
 subjects:
@@ -158,9 +228,10 @@ apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     heritage: Tiller
     release: grafana
 rules:
@@ -170,14 +241,32 @@ rules:
   resourceNames:  [grafana]
 
 ---
+# Source: grafana/templates/tests/test-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: grafana-test
+  labels:
+    app: grafana
+    chart: grafana-3.7.1
+    heritage: Tiller
+    release: grafana
+rules:
+- apiGroups:      ['policy']
+  resources:      ['podsecuritypolicies']
+  verbs:          ['use']
+  resourceNames:  [grafana-test]
+
+---
 # Source: grafana/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     heritage: Tiller
     release: grafana
 roleRef:
@@ -189,18 +278,39 @@ subjects:
   name: grafana
   namespace: default
 ---
+# Source: grafana/templates/tests/test-rolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: grafana-test
+  labels:
+    app: grafana
+    chart: grafana-3.7.1
+    heritage: Tiller
+    release: grafana
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: grafana-test
+subjects:
+- kind: ServiceAccount
+  name: grafana-test
+  namespace: default
+
+---
 # Source: grafana/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - name: service
       port: 80
@@ -212,14 +322,61 @@ spec:
     release: grafana
 
 ---
+# Source: grafana/templates/tests/test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: grafana-test
+  labels:
+    app: grafana
+    chart: "grafana-3.7.1"
+    heritage: "Tiller"
+    release: "grafana"
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  serviceAccountName: grafana-test
+  initContainers:
+    - name: test-framework
+      image: "dduportal/bats:0.4.0"
+      command:
+      - "bash"
+      - "-c"
+      - |
+        set -ex
+        # copy bats to tools dir
+        cp -R /usr/local/libexec/ /tools/bats/
+      volumeMounts:
+      - mountPath: /tools
+        name: tools
+  containers:
+    - name: grafana-test
+      image: "dduportal/bats:0.4.0"
+      command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
+      volumeMounts:
+        - mountPath: /tests
+          name: tests
+          readOnly: true
+        - mountPath: /tools
+          name: tools
+  volumes:
+  - name: tests
+    configMap:
+      name: grafana-test
+  - name: tools
+    emptyDir: {}
+  restartPolicy: Never
+
+---
 # Source: grafana/templates/deployment.yaml
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: grafana
+  namespace: default
   labels:
     app: grafana
-    chart: grafana-2.1.2
+    chart: grafana-3.7.1
     release: grafana
     heritage: Tiller
 spec:
@@ -235,6 +392,11 @@ spec:
       labels:
         app: grafana
         release: grafana
+      annotations:
+        checksum/config: c6175a6618d4050934355143afe7c8f1098b693218a55f3b27f1852ee365161b
+        checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/secret: 1d087aadb105b3a35a07e7be3bdf8e681a3bef74f0c9b5fcb54d27cd2d3925f0
     spec:
       serviceAccountName: grafana
       securityContext:
@@ -243,7 +405,7 @@ spec:
         
       containers:
         - name: grafana
-          image: "grafana/grafana:5.4.3"
+          image: "grafana/grafana:6.3.0-beta2"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
