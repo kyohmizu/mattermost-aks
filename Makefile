@@ -36,6 +36,10 @@ install-fluent-bit: logging/fluent-bit-cm.yaml
 	kubectl apply -f logging/fluent-bit-cm.yaml
 	kubectl apply -f logging/fluent-bit-ds.yaml
 
+get-domain:
+	$(eval IP ?= $(shell kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
+	@echo $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].dnsSettings.fqdn" -o tsv)
+
 get-grafana-pass:
 	kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
 

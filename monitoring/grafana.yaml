@@ -102,7 +102,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "Um04TXp5cHgwdVlCNVNjOXVpVEdTTGtRbk9vc2NTc0NuN290dXVSRw=="
+  admin-password: "WHJObEw4SWVyY2dYcU1PRllmaUFqZUduQzZsSVJjenVPYWg3VU53SQ=="
   ldap-toml: ""
 
 ---
@@ -310,7 +310,7 @@ metadata:
     release: grafana
     heritage: Tiller
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: service
       port: 80
@@ -396,7 +396,7 @@ spec:
         checksum/config: c6175a6618d4050934355143afe7c8f1098b693218a55f3b27f1852ee365161b
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 1d087aadb105b3a35a07e7be3bdf8e681a3bef74f0c9b5fcb54d27cd2d3925f0
+        checksum/secret: b1770f93026a673920e1f8f5559765f1e334ea1a47e77ab98e3195de8d1d1a05
     spec:
       serviceAccountName: grafana
       securityContext:
@@ -405,7 +405,7 @@ spec:
         
       containers:
         - name: grafana
-          image: "grafana/grafana:6.3.0-beta2"
+          image: "grafana/grafana:6.2.5"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
