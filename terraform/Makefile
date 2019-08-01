@@ -1,7 +1,10 @@
-all: kube-conf vault manifests
+all: kube-conf helm vault manifests
 
 kube-conf:
 	terraform output kube_config > ~/.kube/config
+
+helm:
+	helm init
 
 vault:
 	kubectl create -f https://raw.githubusercontent.com/Azure/kubernetes-keyvault-flexvol/master/deployment/kv-flexvol-installer.yaml

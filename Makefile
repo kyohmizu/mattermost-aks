@@ -1,12 +1,7 @@
-install-ingress:
-	helm init && sleep 100
-	helm install stable/nginx-ingress --name nginx-ingress --set controller.replicaCount=2
+install-all: install-ingress install-cert-manager install-apps
 
-fqdn:
-	$(eval DNSNAME ?= kyohmizu)
-	$(eval IP ?= $(shell kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
-	$(eval PUBLICIPID ?= $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].id" -o tsv))
-	az network public-ip update --ids $(PUBLICIPID) --dns-name $(DNSNAME)
+install-ingress:
+	helm install stable/nginx-ingress --name nginx-ingress --set controller.replicaCount=2
 
 install-cert-manager:
 	helm repo add jetstack https://charts.jetstack.io && helm repo update
@@ -15,18 +10,20 @@ install-cert-manager:
 	kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
 	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
 
-install-tools: install-monitoring install-fluent-bit
-
-install-monitoring:
-	kubectl apply -f monitoring/prometheus.yaml
-	kubectl apply -f monitoring/grafana.yaml
-
-install-fluent-bit: logging/fluent-bit-cm.yaml
+install-apps: mattermost/mattermost.yaml logging/fluent-bit-cm.yaml
+	kubectl apply -f mattermost/mattermost.yaml
 	kubectl create namespace logging
 	kubectl apply -f logging/fluent-bit-cm.yaml
-	kubectl apply -f logging/fluent-bit.yaml
+	kubectl apply -f argo-cd/install.yaml
+	kubectl apply -f argo-cd/app
 
-get-domain:
+fqdn:
+	$(eval DNSNAME ?= kyohmizu)
+	$(eval IP ?= $(shell kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
+	$(eval PUBLICIPID ?= $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].id" -o tsv))
+	az network public-ip update --ids $(PUBLICIPID) --dns-name $(DNSNAME)
+
+get-fqdn:
 	$(eval IP ?= $(shell kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
 	@echo $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].dnsSettings.fqdn" -o tsv)
 
