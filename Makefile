@@ -1,4 +1,4 @@
-install-all: install-ingress install-cert-manager install-apps
+install-all: install-ingress install-cert-manager create-ns install-apps
 
 install-ingress:
 	helm install stable/nginx-ingress --name nginx-ingress --set controller.replicaCount=2
@@ -10,11 +10,14 @@ install-cert-manager:
 	kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
 	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
 
+create-ns:
+	kubectl create namespace logging
+	kubectl create namespace argocd
+
 install-apps: mattermost/mattermost.yaml logging/fluent-bit-cm.yaml
 	kubectl apply -f mattermost/mattermost.yaml
-	kubectl create namespace logging
 	kubectl apply -f logging/fluent-bit-cm.yaml
-	kubectl apply -f argo-cd/install.yaml
+	kubectl apply -n argocd -f argo-cd/install.yaml
 	kubectl apply -f argo-cd/app
 
 fqdn:
@@ -26,6 +29,9 @@ fqdn:
 get-fqdn:
 	$(eval IP ?= $(shell kubectl get svc nginx-ingress-controller -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
 	@echo $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].dnsSettings.fqdn" -o tsv)
+
+get-argocd-pass:
+	kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
 
 get-grafana-pass:
 	kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
