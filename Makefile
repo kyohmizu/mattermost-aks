@@ -6,17 +6,14 @@ install-ingress:
 install-cert-manager:
 	helm repo add jetstack https://charts.jetstack.io && helm repo update
 	kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.8/deploy/manifests/00-crds.yaml
-	kubectl create namespace cert-manager
-	kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+	kubectl apply -f cert/cert-manager-ns.yaml
 	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
-
-create-ns:
-	kubectl create namespace logging
-	kubectl create namespace argocd
 
 install-apps: mattermost/mattermost.yaml logging/fluent-bit-cm.yaml
 	kubectl apply -f mattermost/mattermost.yaml
+	kubectl apply -f logging/logging-ns.yaml
 	kubectl apply -f logging/fluent-bit-cm.yaml
+	kubectl apply -f argo-cd/argocd-ns.yaml
 	kubectl apply -n argocd -f argo-cd/install.yaml
 	kubectl apply -f argo-cd/app
 
