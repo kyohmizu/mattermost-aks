@@ -1,22 +1,3 @@
-#grafana.ini:
-#  server:
-#    root_url: https://kyohmizu.japaneast.cloudapp.azure.com/grafana/
-
-#ingress:
-#  enabled: true
-#  annotations:
-#    kubernetes.io/ingress.class: nginx
-#    nginx.ingress.kubernetes.io/rewrite-target: /
-#    nginx.ingress.kubernetes.io/backend-protocol: HTTP
-#  labels: {}
-#  hosts:
-#    - kyohmizu.japaneast.cloudapp.azure.com
-#  tls:
-#    - secretName: tls-secret
-#      hosts:
-#        - kyohmizu.japaneast.cloudapp.azure.com
-#  path: /grafana(/|$)(.*)
-
 service:
   type: LoadBalancer
 
@@ -29,3 +10,32 @@ datasources:
       url: http://prometheus-server
       access: proxy
       isDefault: true
+
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+    - name: 'default'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/default
+    - name: 'prometheus'
+      orgId: 1
+      folder: ''
+      type: file
+      disableDeletion: false
+      editable: true
+      options:
+        path: /var/lib/grafana/dashboards/prometheus
+
+dashboards:
+  default:
+    local-dashboard:
+      url: https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/monitoring/dashboards/dashboard-k8s-metrics.json
+  prometheus:
+    local-dashboard:
+      url: https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/monitoring/dashboards/dashboard-prometheus.json
