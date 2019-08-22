@@ -12,7 +12,7 @@ configJSON:
   ServiceSettings:
     EnableCustomEmoji: true
 
-extraEnvVars: []
+extraEnvVars:
    - name: POSTGRES_PASSWORD
      valueFrom:
        secretKeyRef:
