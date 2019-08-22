@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: grafana
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/helm/charts.git
+    targetRevision: dfa02f9b117a29de889f9c35e0b3abb6012a0877
+    path: stable/grafana
+    helm:
+      releaseName: grafana
+      valueFiles:
+      - https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/monitoring/helm/values-grafana.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+  #ignoreDifferences:
+  #- group: ""
+  #  kind: Service
+  #  jsonPointers:
+  #  - /spec/clusterIP
