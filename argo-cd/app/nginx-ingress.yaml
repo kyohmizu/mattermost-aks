@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nginx-ingress
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/helm/charts.git
+    targetRevision: 0ef8d0d9033417d17d2872f32c97b7f999f9eb8f
+    path: stable/nginx-ingress
+    helm:
+      parameters:
+      - name: "controller.replicaCount"
+        value: "2"
+      releaseName: nginx-ingress
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+  ignoreDifferences:
+  - group: ""
+    kind: Service
+    jsonPointers:
+    - /spec/clusterIP

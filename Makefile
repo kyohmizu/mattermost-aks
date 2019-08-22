@@ -1,4 +1,4 @@
-install-all: install-ingress install-cert-manager create-ns install-apps
+install-all: install-ingress install-cert-manager install-apps install-argocd
 
 install-ingress:
 	helm install stable/nginx-ingress --name nginx-ingress --set controller.replicaCount=2
@@ -13,6 +13,8 @@ install-apps: mattermost/mattermost.yaml logging/fluent-bit-cm.yaml
 	kubectl apply -f mattermost/mattermost.yaml
 	kubectl apply -f logging/logging-ns.yaml
 	kubectl apply -f logging/fluent-bit-cm.yaml
+
+install-argocd:
 	kubectl apply -f argo-cd/argocd-ns.yaml
 	kubectl apply -n argocd -f argo-cd/install.yaml
 	kubectl apply -f argo-cd/app
