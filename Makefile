@@ -1,16 +1,12 @@
-install-all: install-ingress install-cert-manager install-apps install-argocd
-
-install-ingress:
-	helm install stable/nginx-ingress --name nginx-ingress --set controller.replicaCount=2
+install-all: install-cert-manager install-apps install-argocd
 
 install-cert-manager:
-	helm repo add jetstack https://charts.jetstack.io && helm repo update
-	kubectl apply -f cert/00-crds.yaml
-	kubectl apply -f cert/cert-manager-ns.yaml
-	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
+#	helm repo add jetstack https://charts.jetstack.io && helm repo update
+	kubectl apply -f cert/crd/install.yaml
+#	kubectl apply -f cert/cert-manager-ns.yaml
+#	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
 
-install-apps: mattermost/mattermost.yaml logging/fluent-bit-cm.yaml
-	kubectl apply -f mattermost/mattermost.yaml
+install-apps: logging/fluent-bit-cm.yaml
 	kubectl apply -f logging/logging-ns.yaml
 	kubectl apply -f logging/fluent-bit-cm.yaml
 
@@ -30,17 +26,7 @@ get-fqdn:
 	@echo $(shell az network public-ip list --query "[?ipAddress=='$(IP)'].dnsSettings.fqdn" -o tsv)
 
 get-argocd-pass:
-	kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
+	@kubectl get pods -n argocd -l app.kubernetes.io/name=argocd-server -o name | cut -d'/' -f 2
 
 get-grafana-pass:
-	kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
-
-# Need to run when you create mattermost manifest from values.yaml
-
-helm-values-mattermost:
-ifeq ($(DATASOURCE_DB), )
-	$(error DATASOURCE_DB is not set)
-endif
-	mkdir -p mattermost/helm/
-	envsubst < mattermost/template/helm/values-mattermost.yaml > mattermost/helm/values-mattermost.yaml
-
+	@kubectl get secret grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo

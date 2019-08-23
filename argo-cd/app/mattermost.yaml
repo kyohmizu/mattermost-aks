@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mattermost
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mattermost/mattermost-helm.git
+    targetRevision: 1b00ba0e6605026d7ed20fa31a37ae95a14bfe21
+    path: charts/mattermost-team-edition
+    helm:
+      releaseName: mattermost
+      valueFiles:
+      - https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/mattermost/helm/values-mattermost.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true

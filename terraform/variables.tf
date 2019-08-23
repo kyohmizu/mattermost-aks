@@ -21,7 +21,3 @@ variable "tenant_id" {
 variable "machine_type" {
   description = "VM type for this Managed Kubernetes Cluster"
 }
-
-variable "secret" {
-  description = "The value of the Key Vault Secret"
-}

@@ -1,14 +1,14 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: monitoring
+  name: prometheus
   namespace: argocd
 spec:
   project: default
   source:
     repoURL: https://github.com/kyohmizu/mattermost-aks.git
     targetRevision: HEAD
-    path: monitoring/
+    path: monitoring/prometheus.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

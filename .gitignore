@@ -6,10 +6,4 @@ terraform.key.json
 setvars.sh
 _output/
 transactions/
-
-mattermost/helm/values-mattermost.yaml
-mattermost/mattermost.yaml
-
 logging/fluent-bit-cm.yaml
-
-aks-engine/kubernetes.json
