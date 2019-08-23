@@ -10,12 +10,10 @@ vault:
 	kubectl create -f https://raw.githubusercontent.com/Azure/kubernetes-keyvault-flexvol/master/deployment/kv-flexvol-installer.yaml
 	kubectl create secret generic kvcreds --from-literal clientid=$(ARM_CLIENT_ID) --from-literal clientsecret=$(ARM_CLIENT_SECRET) --type=azure/kv
 
-manifests: mattermost fluent-bit-cm
+secret:
+	kubectl create secret generic mattermost-postgresql-password --from-literal postgres-password=$(MATTERMOST_POSTGRES_PASSWORD)
 
-mattermost:
-	export RSGROUP=$(shell terraform output rsgroup); \
-	export KV_NAME=$(shell terraform output kv_name); \
-	envsubst < ../mattermost/template/mattermost.yaml > ../mattermost/mattermost.yaml
+manifests: fluent-bit-cm
 
 fluent-bit-cm:
 	export FLUENT_AZURE_WORKSPACE_ID=$(shell terraform output ala_workspace_id); \

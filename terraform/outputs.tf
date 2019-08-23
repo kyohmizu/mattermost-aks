@@ -29,11 +29,3 @@ output "ala_workspace_id" {
 output "ala_shared_key" {
   value = "${azurerm_log_analytics_workspace.mattermost.primary_shared_key}"
 }
-
-output "kv_name" {
-  value = "${azurerm_key_vault.mattermost.name}"
-}
-
-output "test" {
-  value = "${azurerm_key_vault_secret.mattermost.value}"
-}
