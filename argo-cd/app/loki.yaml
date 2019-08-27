@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/grafana/loki.git
+    targetRevision: e75acd79fc48c357008a4822733133d6b1092c97
+    path: production/helm/loki-stack
+    helm:
+      releaseName: loki
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+  ignoreDifferences:
+  - group: "apps"
+    kind: DaemonSet
+    jsonPointers:
+    - /spec/template/spec/containers/0/securityContext/runAsGroup
+  - group: "apps"
+    kind: StatefulSet
+    jsonPointers:
+    - /spec/template/spec/securityContext/runAsGroup
