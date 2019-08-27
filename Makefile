@@ -1,16 +1,11 @@
-install-all: install-cert-manager install-apps install-argocd
-
-install-cert-manager:
-#	helm repo add jetstack https://charts.jetstack.io && helm repo update
+cluster:
+	terraform init
+	terraform apply -state="terraform/terraform.tfstate" -var-file="terraform/terraform.tfvars" terraform/
+	terraform output -state="terraform/terraform.tfstate" kube_config > ~/.kube/config
+	kubectl create secret generic mattermost-postgresql-password --from-literal postgres-password=$(MATTERMOST_POSTGRES_PASSWORD)
 	kubectl apply -f cert/crd/install.yaml
-#	kubectl apply -f cert/cert-manager-ns.yaml
-#	helm install --name cert-manager --namespace cert-manager --version v0.8.1 jetstack/cert-manager
 
-install-apps: logging/fluent-bit-cm.yaml
-	kubectl apply -f logging/logging-ns.yaml
-	kubectl apply -f logging/fluent-bit-cm.yaml
-
-install-argocd:
+apps:
 	kubectl apply -f argo-cd/argocd-ns.yaml
 	kubectl apply -n argocd -f argo-cd/install.yaml
 	kubectl apply -f argo-cd/app

@@ -21,11 +21,3 @@ output "kube_config" {
 output "host" {
   value = "${azurerm_kubernetes_cluster.mattermost.kube_config.0.host}"
 }
-
-output "ala_workspace_id" {
-  value = "${azurerm_log_analytics_workspace.mattermost.workspace_id}"
-}
-
-output "ala_shared_key" {
-  value = "${azurerm_log_analytics_workspace.mattermost.primary_shared_key}"
-}
