@@ -12,7 +12,7 @@ spec:
     helm:
       releaseName: mattermost
       valueFiles:
-      - https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/mattermost/helm/values-mattermost.yaml
+      - https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/app/mattermost/helm/values-mattermost.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default

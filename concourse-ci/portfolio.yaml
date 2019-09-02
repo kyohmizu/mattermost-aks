@@ -1,0 +1,79 @@
+resources:
+- name: portfolio
+  type: git
+  source:
+    uri: "https://github.com/kyohmizu/devportfolio"
+    branch: ((app_branch))
+
+- name: project
+  type: git
+  source:
+    uri: "git@github.com:kyohmizu/mattermost-aks.git"
+    branch: master
+    private_key: ((github_project_key))
+
+- name: portfolio-image
+  type: docker-image
+  source:
+    repository: kyohmizu/portfolio
+    username: kyohmizu
+    password: ((dockerhub_password))
+
+jobs:
+- name: build-push
+  plan:
+  - get: portfolio
+    trigger: true
+  - put: portfolio-image
+    params:
+      build: portfolio
+      tag_file: portfolio/.git/refs/heads/((app_branch))
+- name: update-manifest
+  plan:
+  - get: portfolio
+    trigger: true
+    passed: ["build-push"]
+  - get: project
+  - task: update-manifest
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: centos
+          tag: 7
+      inputs:
+        - name: project
+        - name: portfolio
+      outputs:
+        - name: changed-project
+      params:
+        BRANCH: ((app_branch))
+      run:
+        path: bash
+        args:
+        - -c
+        - |
+          yum -y install git
+          git config --global user.email "penguinsan_1122@yahoo.co.jp"
+          git config --global user.name "kyohmizu CI"
+          mkdir ~/.ssh
+          echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
+          
+          IMAGE_TAG=`cat portfolio/.git/refs/heads/${BRANCH}`
+          
+          cp -ar project/* project/.git changed-project/
+          
+          sed s/'kyohmizu\/portfolio.*$'/'kyohmizu\/portfolio:'${IMAGE_TAG}/ project/app/portfolio.yaml > changed-project/app/portfolio.yaml
+
+          cd changed-project          
+          
+          git status | grep "nothing to commit"
+          if [ $? = 1 ]
+          then
+            git add .
+            git commit -m "update image to kyohmizu/portfolio:${IMAGE_TAG}"
+          fi
+  - put: project
+    params:
+      repository: changed-project

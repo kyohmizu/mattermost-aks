@@ -56,3 +56,7 @@ get-grafana-pass:
 # Delete cluster
 delete:
 	terraform destroy -state="terraform/terraform.tfstate" -var-file="terraform/terraform.tfvars" terraform/
+
+# Concourse CI
+set-pipeline:
+	fly -t test sp -c concourse-ci/portfolio.yaml -p portfolio -v github_project_key="$${GITHUB_KEY}" -v app_branch=$${BRANCH} -v dockerhub_password=$${DOCKERHUB_PASSWD}

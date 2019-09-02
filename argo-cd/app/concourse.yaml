@@ -10,22 +10,19 @@ spec:
     targetRevision: a7816917c50bc31471793f54036a7eaf0eeeb701
     path: stable/concourse
     helm:
-      parameters:
-      - name: "web.service.type"
-        value: "LoadBalancer"
-      - name: "concourse.web.bindPort"
-        value: "80"
-      - name: "concourse.web.externalUrl"
-        value: "http://kyohmizu-concourse.japaneast.cloudapp.azure.com"
+#      parameters:
+#      - name: "web.service.type"
+#        value: "LoadBalancer"
+#      - name: "concourse.web.bindPort"
+#        value: "80"
+#      - name: "concourse.web.externalUrl"
+#        value: "http://kyohmizu-concourse.japaneast.cloudapp.azure.com"
       releaseName: concourse
+      valueFiles:
+      - https://raw.githubusercontent.com/kyohmizu/mattermost-aks/master/concourse-ci/helm/values-concourse.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default
   syncPolicy:
     automated:
       prune: true
-#  ignoreDifferences:
-#  - group: ""
-#    kind: Service
-#    jsonPointers:
-#    - /spec/clusterIP
