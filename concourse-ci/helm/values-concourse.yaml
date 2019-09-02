@@ -1,0 +1,8 @@
+concourse:
+  web:
+    externalUrl: "http://kyohmizu-concourse.japaneast.cloudapp.azure.com"
+    bindPort: 80
+
+web:
+  service:
+    type: LoadBalancer
