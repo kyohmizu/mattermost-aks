@@ -14,11 +14,9 @@ secret:
 
 cert-manager:
 	kubectl apply -f cert/crd/install.yaml
-	kubectl apply -f cert/cert-manager-ns.yaml
 	kubectl apply -f cert/cert-manager.yaml
 
 argocd:
-	kubectl apply -f argo-cd/argocd-ns.yaml
 	kubectl apply -n argocd -f argo-cd/install.yaml
 	kubectl apply -f argo-cd/app
 
